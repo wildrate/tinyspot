@@ -1,1 +1,1 @@
-include(src)
+add_subdirectory (src)
