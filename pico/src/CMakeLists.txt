@@ -1,8 +1,6 @@
-cmake_minimum_required(VERSION 3.13)
-
 # initialize pico-sdk from submodule
 # note: this must happen before project()
-include(/tmp/pico-sdk/pico_sdk_init.cmake)
+include(/opt/pico-sdk/pico_sdk_init.cmake)
 
 project(tinyspot)
 
