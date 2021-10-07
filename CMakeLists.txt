@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
 include(/home/tiny/lib/pico-sdk/pico_sdk_init.cmake)
-#include(pico_sdk_import.cmake)
 project(tinyspot)
 #C CXX ASM)
 #set(CMAKE_C_STANDARD 11)

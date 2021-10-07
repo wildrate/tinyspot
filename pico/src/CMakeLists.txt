@@ -12,6 +12,7 @@ add_executable(tinyspot
 target_link_libraries(tinyspot pico_stdlib pico_pdm_microphone)
 
 # enable usb output, disable uart output
+# See https://www.electronicshub.org/raspberry-pi-pico-serial-programming/
 pico_enable_stdio_usb(hello_pdm_microphone 1)
 pico_enable_stdio_uart(hello_pdm_microphone 0)
 
