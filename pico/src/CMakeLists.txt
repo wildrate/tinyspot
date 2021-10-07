@@ -1,8 +1,3 @@
-# initialize pico-sdk from submodule
-# note: this must happen before project()
-include(/opt/pico-sdk/pico_sdk_init.cmake)
-
-project(tinyspot)
 
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -11,8 +6,14 @@ add_executable(tinyspot
         main.c
         )
 
-# Add pico_stdlib library which aggregates commonly used features
-target_link_libraries(tinyspot pico_stdlib)
+#target_include_directories(tinyspot PRIVATE ../lib/tinyusb/src/)
+
+# Use the (created beforehand) pico_pdm_microphone lib
+target_link_libraries(tinyspot pico_stdlib pico_pdm_microphone)
+
+# enable usb output, disable uart output
+pico_enable_stdio_usb(hello_pdm_microphone 1)
+pico_enable_stdio_uart(hello_pdm_microphone 0)
 
 # create map/bin/hex/uf2 file in addition to ELF.
 pico_add_extra_outputs(tinyspot)

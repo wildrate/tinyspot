@@ -1,65 +1,98 @@
+// Examples: https://github.com/raspberrypi/pico-examples/blob/master/CMakeLists.txt
+
 #include <stdio.h>
-#include "pico/stdlib.h"
-/**
- *
- *
- * https://github.com/sandeepmistry/pico-microphone/blob/main/src/analog_microphone.c
- */
+#include <stdio.h>
+#include <string.h>
 
- int main() {
-#ifndef PICO_DEFAULT_LED_PIN
-#warning blink example requires a board with a regular LED
-#else
-  const uint LED_PIN = PICO_DEFAULT_LED_PIN;
-  gpio_init(LED_PIN);
-  gpio_set_dir(LED_PIN, GPIO_OUT);
-  while (true) {
-    gpio_put(LED_PIN, 1);
-    sleep_ms(550);
-    gpio_put(LED_PIN, 0);
-    sleep_ms(100);
-    gpio_put(LED_PIN, 1);
-    sleep_ms(100);
-    gpio_put(LED_PIN, 0);
-    sleep_ms(250);
-  }
-  #include <stdio.h>
-#include "hardware/rtc.h"
 #include "pico/stdlib.h"
-#include "pico/util/datetime.h"
+#include "pico/pdm_microphone.h"
+#include "tusb.h" // Is in the pico-sdk/lib - don't need submodule
 
-  int main() {
+// configuration
+const struct pdm_microphone_config config = {
+    // GPIO pin for the PDM DAT signal
+    .gpio_data = 2,
+
+    // GPIO pin for the PDM CLK signal
+    .gpio_clk = 3,
+
+    // PIO instance to use
+    .pio = pio0,
+
+    // PIO State Machine instance to use
+    .pio_sm = 0,
+
+    // sample rate in Hz
+    .sample_rate = 8000,
+
+    // number of samples to buffer
+    .sample_buffer_size = 256,
+};
+
+// variables
+int16_t sample_buffer[256];
+volatile int samples_read = 0;
+
+void on_pdm_samples_ready()
+{
+    // callback from library when all the samples in the library
+    // internal sample buffer are ready for reading
+    samples_read = pdm_microphone_read(sample_buffer, 256);
+}
+
+int main( void )
+{
+    // initialize stdio and wait for USB CDC connect
     stdio_init_all();
-    printf("Hello RTC!\n");
+    while (!tud_cdc_connected()) {
+        tight_loop_contents();
+    }
 
-    char datetime_buf[256];
-    char *datetime_str = &datetime_buf[0];
+    printf("hello PDM microphone\n");
 
-    // Start on Friday 5th of June 2020 15:45:00
-    datetime_t t = {
-        .year  = 2020,
-        .month = 06,
-        .day   = 05,
-        .dotw  = 5, // 0 is Sunday, so 5 is Friday
-        .hour  = 15,
-        .min   = 45,
-        .sec   = 00
-    };
+    // initialize the PDM microphone
+    if (pdm_microphone_init(&config) < 0) {
+        printf("PDM microphone initialization failed!\n");
+        while (1) { tight_loop_contents(); }
+    }
 
-    // Start the RTC
-    rtc_init();
-    rtc_set_datetime(&t);
+    // set callback that is called when all the samples in the library
+    // internal sample buffer are ready for reading
+    pdm_microphone_set_samples_ready_handler(on_pdm_samples_ready);
 
-    // Print the time
+     // start capturing data from the PDM microphone
+    if (pdm_microphone_start() < 0) {
+        printf("PDM microphone start failed!\n");
+        while (1) { tight_loop_contents(); }
+    }
+
+    const uint LED_PIN = PICO_DEFAULT_LED_PIN;
+    gpio_init(LED_PIN);
+    gpio_set_dir(LED_PIN, GPIO_OUT);
     while (true) {
-      rtc_get_datetime(&t);
-      datetime_to_str(datetime_str, sizeof(datetime_buf), &t);
-      printf("\r%s      ", datetime_str);
-      sleep_ms(100);
+    }
+    while (1) {
+        // wait for new samples
+        while (samples_read == 0) { tight_loop_contents(); }
+
+        // store and clear the samples read from the callback
+        int sample_count = samples_read;
+        samples_read = 0;
+
+        // loop through any new collected samples
+        for (int i = 0; i < sample_count; i++) {
+            printf("%d\n", sample_buffer[i]);
+        }
+        gpio_put(LED_PIN, 1);
+        sleep_ms(550);
+        gpio_put(LED_PIN, 0);
+        sleep_ms(100);
+        gpio_put(LED_PIN, 1);
+        sleep_ms(100);
+        gpio_put(LED_PIN, 0);
+        sleep_ms(250);
     }
 
     return 0;
-  }
-
-#endif
 }
+
