@@ -26,7 +26,12 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-    - uses: actions/checkout@v2
+
+    - name: Checkout repo with submodules
+      # Check it out - but also recursively resolve our submodules
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

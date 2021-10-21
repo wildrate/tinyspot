@@ -6,7 +6,7 @@
 
 #include "pico/stdlib.h"
 #include "pico/pdm_microphone.h"
-
+#include "tusb.h"
 
 // configuration
 const struct pdm_microphone_config config = {
