@@ -1,3 +1,5 @@
+[![CMake](https://github.com/wildrate/tinyspot/actions/workflows/cmake.yml/badge.svg)](https://github.com/wildrate/tinyspot/actions/workflows/cmake.yml)
+
 # tinyspot
 
-Tiny images to run on device to spot species.
+TinyML images to spot species and measure biodiversity.
