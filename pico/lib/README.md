@@ -1,8 +1,8 @@
 Submodule libraries we use appear here - if you remember to do a:
 
-after checkout to download.
+`git submodule update --init --recursive`
 
-(You might need to do this within the `pico-sdk/lib` folder to initalise its dependeny on tinyusb)
+after checkout to download.
 
 Libs include:
 * https://github.com/raspberrypi/pico-sdk
