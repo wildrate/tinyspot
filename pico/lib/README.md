@@ -1,10 +1,10 @@
 Submodule libraries we use appear here - if you remember to do a:
 
-`git submodule init`
+after checkout to download.
 
-after checkout!
+(You might need to do this within the `pico-sdk/lib` folder to initalise its dependeny on tinyusb)
 
-Lib include:
-* `git submodule add https://github.com/ArmDeveloperEcosystem/microphone-library-for-pico.git`
-* `git submodule add https://github.com/raspberrypi/pico-tflmicro.git
-` 
+Libs include:
+* https://github.com/raspberrypi/pico-sdk
+* https://github.com/ArmDeveloperEcosystem/microphone-library-for-pico
+* https://github.com/raspberrypi/pico-tflmicro
