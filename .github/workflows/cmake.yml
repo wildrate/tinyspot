@@ -39,7 +39,7 @@ jobs:
       run: |
         git submodule update --init pico/lib/pico-sdk
         git -C pico/lib/pico-sdk submodule update --init lib/tinyusb
-        git submodule update --init pico/lib/microphone-library
+        git submodule update --init pico/lib/microphone-library-for-pico
         git submodule update --init pico/lib/pico-tflmicro
 
     - name: Configure CMake
